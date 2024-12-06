@@ -1,0 +1,23 @@
+[
+    {
+        "server_id": "coordinator",
+        "ip": "127.0.0.1",
+        "port": 8000,
+        "account_id": "",
+        "account_balance": 0.0
+    },
+    {
+        "server_id": "A",
+        "ip": "127.0.0.1",
+        "port": 8001,
+        "account_id": "A",
+        "account_balance": 200.0
+    },
+    {
+        "server_id": "B",
+        "ip": "127.0.0.1",
+        "port": 8002,
+        "account_id": "B",
+        "account_balance": 300.0
+    }
+]
