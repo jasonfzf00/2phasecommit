@@ -64,8 +64,8 @@ class CoordinatorServer(BaseServer):
         participants = [server_A, server_B]
 
         try:
-            balance_A = rpc_call(server_A, "get_balance", params={})
-            balance_B = rpc_call(server_B, "get_balance", params={})
+            balance_A = rpc_call(server_A, "get_balance", params={})["result"]
+            balance_B = rpc_call(server_B, "get_balance", params={})["result"]
 
             if account_id_from == "A":
                 new_balance_A = balance_A - amount
@@ -106,10 +106,10 @@ class CoordinatorServer(BaseServer):
         try:
             # Validate bonus percentage
             if bonus_percentage < 0:
-                return "Failed to add bonus. Transaction aborted."
+                return "Failed to add bonus due to invalid bonus. Transaction aborted."
 
-            balance_A = rpc_call(server_A, "get_balance", params={})
-            balance_B = rpc_call(server_B, "get_balance", params={})
+            balance_A = rpc_call(server_A, "get_balance", params={})["result"]
+            balance_B = rpc_call(server_B, "get_balance", params={})["result"]
             bonus_amount = bonus_percentage * balance_A
             new_balances = {"A": balance_A + bonus_amount, "B": balance_B + bonus_amount}
             old_balances = {"A": balance_A, "B": balance_B}
@@ -128,7 +128,7 @@ class CoordinatorServer(BaseServer):
         except TimeoutError:
             return "Failed to add bonus because of timeout"
         except Exception as e:
-            return f"Failed to add bonus. Transaction aborted."
+            return f"Failed to add bonus. Error occured: {e}. Transaction aborted."
 
     def propose_prepare(self, participants, old_balances, new_balances):
         """
