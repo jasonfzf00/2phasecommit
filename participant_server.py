@@ -5,6 +5,7 @@ from flask_apscheduler import APScheduler
 from rpc_call import rpc_call
 import time
 import argparse
+from flask import g
 
 class ParticipantServer(BaseServer):
     def __init__(self, host, port, account_id, account_balance=0.0):
@@ -138,9 +139,13 @@ class ParticipantServer(BaseServer):
 
     def mock_failure(self):
         print(f"Simulating failure: Sleeping for 10 seconds.")
-        time.sleep(10)
-        self.transactions.clear()
-        self.recover()
+        g.server_busy = True
+        try:
+            time.sleep(10)
+            self.transactions.clear()
+            self.recover()
+        finally:
+            g.server_busy = False
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
