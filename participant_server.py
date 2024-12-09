@@ -46,7 +46,7 @@ class ParticipantServer(BaseServer):
             time_elapsed = current_time - transaction["timestamp"]
             if time_elapsed > self.timeout:
                 print(f"Timeout detected for transaction {transaction_id}.")
-                self.handle_abort(transaction_id)
+                self.transactions.clear()
                 
     def get_balance(self):
         """

@@ -43,7 +43,6 @@ class CoordinatorServer(BaseServer):
             time_elapsed = current_time - transaction["timestamp"]
             if time_elapsed > self.timeout:
                 print(f"Timeout detected for transaction {transaction_id}.")
-                self.handle_abort(transaction_id)
 
     def get_logs(self):
         """
@@ -196,22 +195,20 @@ class CoordinatorServer(BaseServer):
             print(f"Transaction {transaction_id} not found.")
             return False
         
-        success = True
         for participant in transaction["participants"]:
             log_event("commit", participant["account_id"], transaction["new_balances"][participant["account_id"]], None)
             try:
                 response = rpc_call(participant, "handle_commit", params={"transaction_id": transaction_id})
-                if not response["result"].get("canCommit", False):
+                if not response["result"]["result"].get("canCommit", False):
                     print(f"Commit failed for participant {participant['server_id']}")
                     success = False
                     break
+            except TimeoutError:
+                print(f"Timeout detected for participant {participant['server_id']} during prepare.")
             except Exception as e:
                 print(f"Error during commit for participant {participant['server_id']}: {e}")
                 success = False
                 break
-            
-        if not success:
-            return self.propose_abort(transaction_id)
             
         print(f"Transaction {transaction_id} committed successfully.")
         del self.transactions[transaction_id]
