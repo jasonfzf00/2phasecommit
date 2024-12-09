@@ -114,7 +114,7 @@ class ParticipantServer(BaseServer):
             return
         
         try:
-            logs = rpc_call(coordinator, "get_logs", params={})
+            logs = rpc_call(coordinator, "get_logs", params={}).get("result", [])
             relevant_logs = [log for log in logs
             if log["account_id"] == self.account_id and log["state"] == "commit"]
             
@@ -139,6 +139,7 @@ class ParticipantServer(BaseServer):
     def mock_failure(self):
         print(f"Simulating failure: Sleeping for 10 seconds.")
         time.sleep(10)
+        self.transactions.clear()
         self.recover()
         
 if __name__ == "__main__":
