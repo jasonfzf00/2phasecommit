@@ -81,7 +81,7 @@ class CoordinatorServer(BaseServer):
             
             transaction = self.transactions[self.transaction_counter]
             responses = transaction["responses"]
-            if all(response["result"]["canPrepare"] for response in responses.values()):
+            if all(response["result"]["result"]["canPrepare"] for response in responses.values()):
                 return f"Transferred {amount} from {account_id_from} to {account_id_to}. " \
                     f"New Balances: A: {new_balances['A']}, B: {new_balances['B']}"
             else:
@@ -120,7 +120,7 @@ class CoordinatorServer(BaseServer):
             # Check transaction status directly
             transaction = self.transactions[self.transaction_counter]
             responses = transaction["responses"]
-            if all(response["result"]["canPrepare"] for response in responses.values()):
+            if all(response["result"]["result"]["canPrepare"] for response in responses.values()):
                 return f"Added bonus {bonus_amount} to both accounts. " \
                     f"New Balances: A: {new_balances['A']}, B: {new_balances['B']}"
             else:
@@ -175,7 +175,7 @@ class CoordinatorServer(BaseServer):
 
         responses = transaction["responses"]
         all_prepared = all(
-            response["result"]["canPrepare"]
+            response["result"]["result"]["canPrepare"]
             for response in responses.values()
             if "result" in response
         )
